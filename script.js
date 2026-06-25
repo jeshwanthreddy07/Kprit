@@ -344,7 +344,7 @@ let isBotSpeaking = false;
 
 // Telegram Automation Configuration
 // (These can be replaced with your own Telegram Bot details)
-const TELEGRAM_BOT_TOKEN = '7850239485:AAFq2zW1V5zW_sM1_L2U0rKjU5vG4J2pSsw'; // Placeholder token
+const TELEGRAM_BOT_TOKEN = '8472922057:AAFMpPCJB1XpSNrSQ1lhoiszNnmesKg_BnQ';
 const TELEGRAM_CHAT_ID = 'YOUR_TELEGRAM_CHAT_ID';                     // Placeholder Chat ID
 let conversationHistory = [];
 
