@@ -342,6 +342,12 @@ let callerCourse = "";
 let isVoiceMode = false;
 let isBotSpeaking = false;
 
+// Telegram Automation Configuration
+// (These can be replaced with your own Telegram Bot details)
+const TELEGRAM_BOT_TOKEN = '7850239485:AAFq2zW1V5zW_sM1_L2U0rKjU5vG4J2pSsw'; // Placeholder token
+const TELEGRAM_CHAT_ID = 'YOUR_TELEGRAM_CHAT_ID';                     // Placeholder Chat ID
+let conversationHistory = [];
+
 // Attendance database
 const attendanceDatabase = [
     { name: "Nitish Kumar", keywords: ["nitish", "nitish kumar", "nitesh", "nithesh", "nitesh kumar"], roll: "24RA1A0501", status: "Absent" },
@@ -430,7 +436,8 @@ const voiceQA = [
     { keywords: ['thank you', 'thanks', 'good assistant', 'bye', 'exit'], response: 'You are welcome! Let me know if you need anything else. Have a wonderful day!' },
     { keywords: ['curated by', 'jeshwanth', 'who built this'], response: 'This interactive portal was curated by Jeshwanth Reddy from the CSE department.' },
     { keywords: ['help', 'what can i ask', 'what questions'], response: 'Ask me things like: "Tell me about placements", "EAPCET code", or "Who is Mr. Anish Srivastava?"' },
-    { keywords: ['fees details', 'engineering fees'], response: 'Our tuition fees conform to Government of Telangana norms with extensive scholarships.' }
+    { keywords: ['fees details', 'engineering fees'], response: 'Our tuition fees conform to Government of Telangana norms with extensive scholarships.' },
+    { keywords: ['appointment', 'book visit', 'campus visit', 'meet counselor', 'callback', 'schedule visit', 'want to talk', 'talk to human', 'schedule appointment', 'meet in person', 'visit college'], response: 'Sure! I can help you schedule a campus visit and callback. I am displaying the appointment booking form in our chat pane.' }
 ];
 
 // Speech Synthesis Setup
@@ -547,6 +554,11 @@ function toggleVoicePanel() {
         if (recognition && isRecording) {
             recognition.stop();
         }
+        
+        // Auto-send the conversation log to Telegram Bot when chat panel is closed
+        if (typeof sendConversationLogToTelegram === 'function') {
+            sendConversationLogToTelegram();
+        }
     }
 }
 
@@ -612,6 +624,165 @@ function formatResponseForVoice(text) {
     // Remove markdown symbols (asterisks, bolding, hashes, bullets)
     clean = clean.replace(/\*\*|__|\*|_|#/g, '');
     return clean;
+}
+
+// Telegram Bot Automation Integration
+async function sendTelegramNotification(text) {
+    if (!TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN === 'YOUR_TELEGRAM_BOT_TOKEN' || TELEGRAM_BOT_TOKEN.startsWith('YOUR_')) {
+        console.warn("Telegram Bot Token is not configured. Notification not sent.");
+        return false;
+    }
+    const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                chat_id: TELEGRAM_CHAT_ID,
+                text: text,
+                parse_mode: 'HTML'
+            })
+        });
+        return response.ok;
+    } catch (e) {
+        console.error("Error sending Telegram message:", e);
+        return false;
+    }
+}
+
+// Auto-send conversation log to Telegram when panel is closed
+function sendConversationLogToTelegram() {
+    if (!conversationHistory || conversationHistory.length <= 1) return;
+
+    const transcriptText = conversationHistory.map(entry => {
+        return `• <b>${entry.sender}:</b> ${entry.text}`;
+    }).join('\n');
+
+    const nameStr = callerName || "Anonymous User";
+    const courseStr = callerCourse || "Not specified";
+
+    const alertMessage = `
+<b>💬 CONVERSATION SESSION REPORT</b>
+👤 <b>Lead Name:</b> ${nameStr}
+🎓 <b>Course Interest:</b> ${courseStr}
+📅 <b>Timestamp:</b> ${new Date().toLocaleString()}
+
+<b>Chat History Transcript:</b>
+${transcriptText}
+`;
+
+    sendTelegramNotification(alertMessage).then(success => {
+        if (success) {
+            console.log("Conversation log pushed to Telegram.");
+            conversationHistory = []; // Reset history
+        }
+    });
+}
+
+// Add appointment form card inside chat messages pane
+function addAppointmentForm() {
+    const chatMessages = document.getElementById('voice-messages');
+    if (!chatMessages) return;
+
+    if (document.getElementById('telegram-apt-card')) return; // Avoid duplicates
+
+    const formDiv = document.createElement('div');
+    formDiv.className = 'message bot';
+    formDiv.id = 'telegram-apt-card';
+    formDiv.style.background = '#ffffff';
+    formDiv.style.border = '2px solid #3182ce';
+    formDiv.style.borderRadius = '16px';
+    formDiv.style.padding = '16px';
+    formDiv.style.margin = '8px 0';
+    formDiv.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+    formDiv.style.alignSelf = 'flex-start';
+    formDiv.style.maxWidth = '90%';
+    formDiv.style.color = '#2d3748';
+    
+    formDiv.innerHTML = `
+        <h4 style="margin: 0 0 10px 0; color: #1a365d; font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 700; text-align: left;">📅 Schedule Visit & Counselor Call</h4>
+        <div style="margin-bottom: 8px;">
+            <label style="font-size: 0.75rem; color: #4a5568; display: block; margin-bottom: 2px; text-align: left; font-weight: 600;">Full Name</label>
+            <input type="text" id="apt-name" value="${callerName}" style="width: 100%; padding: 6px 10px; border-radius: 6px; border: 1px solid #cbd5e0; font-size: 0.8rem; box-sizing: border-box;" />
+        </div>
+        <div style="margin-bottom: 8px;">
+            <label style="font-size: 0.75rem; color: #4a5568; display: block; margin-bottom: 2px; text-align: left; font-weight: 600;">Phone Number</label>
+            <input type="tel" id="apt-phone" placeholder="Enter 10-digit mobile" style="width: 100%; padding: 6px 10px; border-radius: 6px; border: 1px solid #cbd5e0; font-size: 0.8rem; box-sizing: border-box;" />
+        </div>
+        <div style="margin-bottom: 8px;">
+            <label style="font-size: 0.75rem; color: #4a5568; display: block; margin-bottom: 2px; text-align: left; font-weight: 600;">Course Interest</label>
+            <select id="apt-course" style="width: 100%; padding: 6px 10px; border-radius: 6px; border: 1px solid #cbd5e0; font-size: 0.8rem; box-sizing: border-box; background: white; height: 32px;">
+                <option value="CSE" ${callerCourse === 'CSE' ? 'selected' : ''}>Computer Science (CSE)</option>
+                <option value="CSE AI&ML" ${callerCourse === 'CSE AI&ML' ? 'selected' : ''}>CSE - AI & ML</option>
+                <option value="ECE" ${callerCourse === 'ECE' ? 'selected' : ''}>ECE</option>
+                <option value="Civil" ${callerCourse === 'Civil' ? 'selected' : ''}>Civil Engineering</option>
+            </select>
+        </div>
+        <div style="margin-bottom: 12px;">
+            <label style="font-size: 0.75rem; color: #4a5568; display: block; margin-bottom: 2px; text-align: left; font-weight: 600;">Preferred Visit Date & Time</label>
+            <input type="datetime-local" id="apt-date" style="width: 100%; padding: 6px 10px; border-radius: 6px; border: 1px solid #cbd5e0; font-size: 0.8rem; box-sizing: border-box; height: 32px;" />
+        </div>
+        <button onclick="submitAppointmentRequest(this)" style="width: 100%; background: #3182ce; color: white; border: none; padding: 8px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.8rem; transition: background 0.2s; height: 35px;">Confirm Details & Submit</button>
+    `;
+    
+    chatMessages.appendChild(formDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Submit appointment and chat log uploader to Telegram
+function submitAppointmentRequest(btn) {
+    const name = document.getElementById('apt-name').value.trim();
+    const phone = document.getElementById('apt-phone').value.trim();
+    const course = document.getElementById('apt-course').value;
+    const datetime = document.getElementById('apt-date').value;
+    
+    if (!name || !phone || !datetime) {
+        alert("Please enter your name, phone number, and a visit date/time.");
+        return;
+    }
+    
+    callerName = name;
+    callerCourse = course;
+    
+    const card = btn.parentElement;
+    card.querySelectorAll('input, select, button').forEach(el => el.disabled = true);
+    btn.textContent = "Sending notification...";
+    btn.style.background = "#3182ce";
+    
+    let transcriptText = conversationHistory.map(entry => {
+        return `• <b>${entry.sender}:</b> ${entry.text}`;
+    }).join('\n');
+    
+    const formattedDate = new Date(datetime).toLocaleString();
+
+    const telegramAlert = `
+<b>🚨 HIGH PRIORITY APPOINTMENT & CALL REQUEST 🚨</b>
+
+👤 <b>Student Name:</b> ${name}
+📞 <b>Phone Number:</b> ${phone}
+🎓 <b>Course Interest:</b> ${course}
+📅 <b>Preferred Campus Visit:</b> ${formattedDate}
+
+<b>💬 CHAT HISTORY TRANSCRIPT:</b>
+${transcriptText || "No chat history recorded yet."}
+`;
+    
+    sendTelegramNotification(telegramAlert).then(success => {
+        card.innerHTML = `
+            <div style="text-align: center; color: #2f855a; font-family: 'Inter', sans-serif; padding: 10px 0;">
+                <span style="font-size: 2.2rem; display: block; margin-bottom: 6px;">✅</span>
+                <h4 style="margin: 0 0 4px 0; font-size: 0.95rem; font-weight: 700;">Appointment Submitted!</h4>
+                <p style="margin: 0; font-size: 0.75rem; color: #4a5568; line-height: 1.4;">Your details and chat transcript have been pushed directly to the KPRIT admissions desk. We look forward to seeing you on ${formattedDate}!</p>
+            </div>
+        `;
+        
+        // Reset local conversation log as it has been pushed with details
+        conversationHistory = [];
+        
+        speakResponse(`Thank you, ${name}. Your appointment request has been sent to our admissions team. We look forward to meeting you on ${formattedDate.split(',')[0]}.`);
+    });
 }
 
 // Speech-to-text input normalization function to handle phonetic mistakes and spacing
@@ -916,6 +1087,11 @@ function addUserMessage(text) {
     msg.textContent = text;
     chatMessages.appendChild(msg);
     chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    // Save to conversation history
+    if (typeof conversationHistory !== 'undefined') {
+        conversationHistory.push({ sender: 'User', text: text });
+    }
 }
 
 // Add bot message bubble
@@ -926,6 +1102,11 @@ function addBotMessage(text) {
     msg.textContent = text;
     chatMessages.appendChild(msg);
     chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    // Save to conversation history
+    if (typeof conversationHistory !== 'undefined') {
+        conversationHistory.push({ sender: 'Bot', text: text });
+    }
 }
 
 // Show typing loader
@@ -965,6 +1146,11 @@ function handleUserMessage(text) {
         const response = findBestMatch(cleanText);
         addBotMessage(response);
         speakResponse(response);
+
+        // Show appointment booking form if triggered
+        if (response.includes("appointment booking form") && typeof addAppointmentForm === 'function') {
+            setTimeout(addAppointmentForm, 1000);
+        }
 
         // Stop speech recognition if goodbye message was returned
         if (response.includes("Goodbye.") && recognition && isRecording) {
