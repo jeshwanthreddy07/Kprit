@@ -345,7 +345,7 @@ let isBotSpeaking = false;
 // Telegram Automation Configuration
 // (These can be replaced with your own Telegram Bot details)
 const TELEGRAM_BOT_TOKEN = '8472922057:AAFMpPCJB1XpSNrSQ1lhoiszNnmesKg_BnQ';
-const TELEGRAM_CHAT_ID = 'YOUR_TELEGRAM_CHAT_ID';                     // Placeholder Chat ID
+const TELEGRAM_CHAT_ID = '6703785356';                     // Jeshwanth Reddy's Chat ID
 let conversationHistory = [];
 
 // Attendance database
