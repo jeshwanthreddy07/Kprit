@@ -2067,3 +2067,371 @@ footer {
   scrollbar-width: thin;
   scrollbar-color: var(--color-accent) var(--color-surface);
 }
+
+/* ===========================================
+   UPGRADE 1: What's New / Highlights Section
+   =========================================== */
+
+.highlights-section {
+  padding: 80px 0;
+  background: linear-gradient(135deg, #f7fafc 0%, #edf2ff 50%, #f0e6ff 100%);
+}
+
+.highlights-section .section-header {
+  text-align: center;
+  margin-bottom: var(--space-2xl);
+}
+
+.highlights-section .section-header h2 {
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.highlights-section .section-header p {
+  color: var(--color-text-light);
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.highlights-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px;
+}
+
+.highlight-card {
+  background: var(--color-white);
+  padding: 2rem 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+}
+
+.highlight-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, var(--color-accent), #805ad5);
+}
+
+.highlight-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+.highlight-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  padding: 4px 14px;
+  border-radius: 50px;
+  color: var(--color-white);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.highlight-badge.new {
+  background: var(--color-accent);
+}
+
+.highlight-badge.hot {
+  background: var(--color-secondary);
+}
+
+.highlight-badge.breaking {
+  background: #805ad5;
+}
+
+.highlight-badge.alert {
+  background: #d69e2e;
+}
+
+.highlight-icon {
+  font-size: 2.5rem;
+  margin-bottom: var(--space-md);
+  display: block;
+}
+
+.highlight-card h3 {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: var(--space-sm);
+  line-height: 1.4;
+}
+
+.highlight-card p {
+  color: var(--color-text-light);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* ===========================================
+   UPGRADE 2: Voice Button Pulse Animations
+   =========================================== */
+
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(49, 130, 206, 0.7); }
+  50% { box-shadow: 0 0 0 12px rgba(49, 130, 206, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(49, 130, 206, 0); }
+}
+
+@keyframes pulse-listening {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+  50% { box-shadow: 0 0 0 18px rgba(220, 38, 38, 0); }
+}
+
+#voice-btn.listening {
+  animation: pulse-listening 0.6s ease-in-out infinite !important;
+  background: linear-gradient(135deg, #e53e3e, #c53030) !important;
+}
+
+/* ===========================================
+   UPGRADE 4: FAQ Section
+   =========================================== */
+
+.faq-section {
+  padding: 100px 0;
+  background: var(--color-white);
+}
+
+.faq-section .section-header {
+  text-align: center;
+  margin-bottom: var(--space-2xl);
+}
+
+.faq-section .section-header h2 {
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.faq-section .section-header p {
+  color: var(--color-text-light);
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.faq-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.faq-item {
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+}
+
+.faq-item:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.faq-question {
+  width: 100%;
+  padding: 20px 24px;
+  background: var(--color-surface);
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  transition: background 0.3s ease;
+}
+
+.faq-question:hover {
+  background: #edf2f7;
+}
+
+.faq-question::after {
+  content: '+';
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.faq-item.active .faq-question {
+  background: var(--color-accent);
+  color: var(--color-white);
+}
+
+.faq-item.active .faq-question::after {
+  content: '−';
+  color: var(--color-white);
+}
+
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.4s ease;
+  padding: 0 24px;
+  background: var(--color-white);
+}
+
+.faq-item.active .faq-answer {
+  max-height: 300px;
+  padding: 20px 24px;
+}
+
+.faq-answer p {
+  color: var(--color-text);
+  line-height: 1.8;
+  font-size: 0.95rem;
+}
+
+/* ===========================================
+   UPGRADE 5: Telegram Widget
+   =========================================== */
+
+.telegram-info-box {
+  background: linear-gradient(135deg, #0088cc, #0077b5);
+  color: var(--color-white);
+  padding: 2.5rem;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 136, 204, 0.3);
+  margin-top: var(--space-2xl);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.telegram-info-box h3 {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: var(--space-sm);
+}
+
+.telegram-description {
+  font-size: 1rem;
+  opacity: 0.9;
+  margin-bottom: var(--space-lg);
+  line-height: 1.6;
+}
+
+.telegram-button {
+  display: inline-block;
+  padding: 14px 36px;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+}
+
+.telegram-button.primary {
+  background: var(--color-white);
+  color: #0088cc;
+}
+
+.telegram-button.primary:hover {
+  background: #e6f7ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.telegram-channel-text {
+  margin-top: var(--space-lg);
+  font-size: 0.95rem;
+  opacity: 0.85;
+}
+
+.telegram-link {
+  color: var(--color-white);
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.telegram-link:hover {
+  opacity: 1;
+  text-decoration: none;
+}
+
+/* ===========================================
+   RESPONSIVE: Upgrades
+   =========================================== */
+
+@media (max-width: 992px) {
+  .highlights-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .highlights-section {
+    padding: 60px 0;
+  }
+
+  .highlights-section .section-header h2 {
+    font-size: 2rem;
+  }
+
+  .faq-section {
+    padding: 60px 0;
+  }
+
+  .faq-section .section-header h2 {
+    font-size: 2rem;
+  }
+
+  .telegram-info-box {
+    padding: 2rem 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .highlights-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .highlights-section .section-header h2 {
+    font-size: 1.6rem;
+  }
+
+  .faq-question {
+    font-size: 0.95rem;
+    padding: 16px 18px;
+  }
+
+  .faq-section .section-header h2 {
+    font-size: 1.6rem;
+  }
+
+  .telegram-info-box {
+    padding: 1.5rem 1rem;
+    margin-left: var(--space-md);
+    margin-right: var(--space-md);
+  }
+
+  .telegram-button {
+    padding: 12px 28px;
+    font-size: 0.9rem;
+  }
+}

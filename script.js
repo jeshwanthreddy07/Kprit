@@ -437,7 +437,15 @@ const voiceQA = [
     { keywords: ['curated by', 'jeshwanth', 'who built this'], response: 'This interactive portal was curated by Jeshwanth Reddy from the CSE department.' },
     { keywords: ['help', 'what can i ask', 'what questions'], response: 'Ask me things like: "Tell me about placements", "EAPCET code", or "Who is Mr. Anish Srivastava?"' },
     { keywords: ['fees details', 'engineering fees'], response: 'Our tuition fees conform to Government of Telangana norms with extensive scholarships.' },
-    { keywords: ['appointment', 'book visit', 'campus visit', 'meet counselor', 'callback', 'schedule visit', 'want to talk', 'talk to human', 'schedule appointment', 'meet in person', 'visit college'], response: 'Sure! I can help you schedule a campus visit and callback. I am displaying the appointment booking form in our chat pane.' }
+    { keywords: ['appointment', 'book visit', 'campus visit', 'meet counselor', 'callback', 'schedule visit', 'want to talk', 'talk to human', 'schedule appointment', 'meet in person', 'visit college'], response: 'Sure! I can help you schedule a campus visit and callback. I am displaying the appointment booking form in our chat pane.' },
+
+    /* NEW: Upgrade 3 — 6 Enhanced Voice Responses */
+    { keywords: ['voice assistant', 'what can you do', 'help me', 'features list', 'assistant features'], response: 'I am KPRIT Assist, your AI voice assistant. I can help with courses and fees, admissions and deadlines, placements and statistics, scholarships and financial aid, campus news and events, or facilities information. Just ask me anything about KPRIT!' },
+    { keywords: ['latest news update', 'what is new today', 'recent updates', 'new updates', 'whats new'], response: 'Here are our latest updates. TechnoVision 2026 tech festival coming July 1 to 2 with hackathons and coding contests. Placement drive concluded with 100 plus companies and 6 point 56 lakhs average salary. New AI and Machine Learning laboratory inaugurated with GPU servers. B.Tech admissions open with July 31 deadline. 25 lakhs scholarship pool announced.' },
+    { keywords: ['placement details', 'salary details', 'companies recruiting', 'job placement rate', 'placement stats'], response: 'KPRIT has excellent placements. Highest package is 54 lakhs per annum. Average package is 6 point 56 lakhs. 85 percent of eligible students are placed. Top recruiters include Microsoft, Infosys, TCS, Amazon, Google, Cognizant, and Wipro. Placements span IT, finance, consulting, and manufacturing sectors.' },
+    { keywords: ['how to apply kprit', 'apply process', 'eamcet apply', 'admission steps'], response: 'For B.Tech admission, qualification in TS EAMCET is required. After EAMCET, you participate in state counseling and seat allotment. Registration deadline for 2026-27 is July 31, 2026. For M.Tech, GATE score is needed. For MBA, TGICET or CAT score is needed. Visit kpritech.ac.in or call 95420-42666 for details.' },
+    { keywords: ['scholarship details', 'financial aid', 'fees assistance', 'merit scholarship amount', 'scholarship amount'], response: 'KPRIT offers 25 lakhs in total scholarships. Merit scholarships: 25 scholarships of 1 lakh each for students with 90 percent or higher marks. Need-based scholarships: 50 scholarships of 50,000 each for economically backward students. Additional scholarships available for SC, ST, OBC categories. Application deadline is July 15, 2026.' },
+    { keywords: ['what features available', 'show me features', 'portal features', 'telegram bot feature', 'bot features'], response: 'Our portal has several features. Real-time news feed with instant filtering and search. Interactive voice assistant with text-to-speech. Lead capture for admissions inquiry. Telegram bot integration for direct messaging. Detailed information about courses, placements, admissions, facilities, and scholarships. You can access everything through voice, chat, or traditional browsing.' }
 ];
 
 // Speech Synthesis Setup
@@ -461,6 +469,9 @@ if (SpeechRecognition) {
         }
         const wave = document.getElementById('voice-wave');
         if (wave) wave.classList.add('active');
+        /* NEW: Upgrade 2 — Add listening animation class to voice button */
+        const voiceBtn = document.getElementById('voice-btn');
+        if (voiceBtn) voiceBtn.classList.add('listening');
     };
 
     recognition.onresult = (event) => {
@@ -531,6 +542,9 @@ if (SpeechRecognition) {
         }
         const wave = document.getElementById('voice-wave');
         if (wave) wave.classList.remove('active');
+        /* NEW: Upgrade 2 — Remove listening animation class */
+        const voiceBtn = document.getElementById('voice-btn');
+        if (voiceBtn) voiceBtn.classList.remove('listening');
     };
 }
 
@@ -1374,4 +1388,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // 4. Scroll animations and counters
     initScrollAnimations();
     initStatCounters();
+
+    // 5. NEW: Upgrade 4 — FAQ accordion toggle
+    document.querySelectorAll('.faq-question').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const parentItem = btn.parentElement;
+            const isActive = parentItem.classList.contains('active');
+
+            // Close all other FAQ items
+            document.querySelectorAll('.faq-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Toggle current item
+            if (!isActive) {
+                parentItem.classList.add('active');
+            }
+        });
+    });
 });
